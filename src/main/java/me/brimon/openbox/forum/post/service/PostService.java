@@ -1,8 +1,7 @@
 package me.brimon.openbox.forum.post.service;
 
-import me.brimon.openbox.forum.post.dto.CommentDTO;
 import me.brimon.openbox.forum.post.dto.PostDTO;
-import me.brimon.openbox.forum.post.dto.PutDTO;
+import me.brimon.openbox.forum.post.entity.Comment;
 import me.brimon.openbox.forum.post.entity.Post;
 import me.brimon.openbox.forum.post.entity.Topic;
 import me.brimon.openbox.forum.post.repository.PostRepository;
@@ -18,31 +17,21 @@ public class PostService {
     public Post getPost(Integer id){
         return postRepository.getPostById(id);
     }
-    public Post addPost(PostDTO postDTO){
-        Post post = new Topic();
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
-        post.setPublisher(postDTO.getPublisher());
-        post.setPublishedTime(ZonedDateTime.now());
-        return postRepository.save(post);
+    public Post addPost(Post post){
+        return post.save(postRepository,post);
 
     }
-    public PutDTO modifyPost(Integer id,PostDTO postDTO){
+    public Post modifyPost(Integer id, String title, String comment){
         Post post = postRepository.getPostById(id);
-        post.setTitle(postDTO.getTitle());
-        post.setContent(postDTO.getContent());
-        post.setPublisher(postDTO.getPublisher());
-        Post returnedPost = postRepository.save(post);
-        PutDTO putDTO = new PutDTO();
-        putDTO.setContent(returnedPost.getContent());
-        putDTO.setTitle(returnedPost.getTitle());
-        return putDTO;
+        return post.modify(postRepository, title, comment);
     }
     public void deletePost(Integer id){
-        postRepository.deleteById(id);
+        Post post = postRepository.getPostById(id);
+        post.delete(postRepository,post);
     }
-    public void addComment(Integer id, CommentDTO commentDTO){
-       //
+    public Comment addComment(Integer topicId, Post post){
+        Post topic = getPost(topicId);
+        return topic.comment(postRepository,post);
     }
 
 }

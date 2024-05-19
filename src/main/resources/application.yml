@@ -2,7 +2,7 @@ spring:
   application:
     name: forum
   datasource:
-    url: jdbc:mysql://database-1-test.cdsga6wkuov5.ca-central-1.rds.amazonaws.com:3306/opb
+    url: jdbc:mysql://database-1-test.cdsga6wkuov5.ca-central-1.rds.amazonaws.com:3306/forum
     username: admin
     password: UzrxQQ1eEzYCrz98xHeu
   jackson:

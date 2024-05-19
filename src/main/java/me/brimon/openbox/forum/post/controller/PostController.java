@@ -1,32 +1,36 @@
 package me.brimon.openbox.forum.post.controller;
 
-import me.brimon.openbox.forum.post.dto.CommentDTO;
 import me.brimon.openbox.forum.post.dto.PostDTO;
-import me.brimon.openbox.forum.post.dto.PutDTO;
 import me.brimon.openbox.forum.post.entity.Post;
 import me.brimon.openbox.forum.post.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
 
 @RestController
 @RequestMapping("/post")
 public class PostController {
     @Autowired
     PostService postService;
+
     @GetMapping("/{postId}")
-    public Post getpost(@PathVariable Integer postId)
+    public PostDTO getpost(@PathVariable Integer postId)
     {
-        return postService.getPost(postId);
+        return postService.getPost(postId).generateDTO();
     }
     @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping()
-    public Post addPost(PostDTO postDTO){
-        return postService.addPost(postDTO);
+    public PostDTO addPost(@RequestBody PostDTO postDTO){
+        Post post = Post.fromDTO(postDTO);
+        System.out.println(postDTO);
+
+        return postService.addPost(post).generateDTO();
     }
 
     @PutMapping("/{postId}")
-    public PutDTO modifyPost(@PathVariable Integer postId, PostDTO postDTO){
-        return postService.modifyPost(postId,postDTO);
+    public PostDTO modifyPost(@PathVariable Integer postId, @RequestBody PostDTO postDTO){
+        return postService.modifyPost(postId, postDTO.getTitle(), postDTO.getContent()).generateDTO();
     }
 
     @DeleteMapping("/{postId}")
@@ -35,8 +39,10 @@ public class PostController {
     }
 
     @PostMapping("/{topicId}/comment")
-    public void addComment(@PathVariable Integer topicId, CommentDTO commentDTO){
-        postService.addComment(topicId,commentDTO);
+    public PostDTO addComment(@PathVariable Integer topicId, @RequestBody PostDTO postDTO){
+        //postDTO.setType("COMMENT");
+        Post post = Post.fromDTO(postDTO);
+        return postService.addComment(topicId,post).generateDTO();
     }
 
 
